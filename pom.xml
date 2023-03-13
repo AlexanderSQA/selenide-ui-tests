@@ -8,14 +8,13 @@
   <artifactId>SelenideTest</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>SelenideTest</name>
-  <packaging>war</packaging>
 
   <properties>
-    <maven.compiler.target>18</maven.compiler.target>
-    <maven.compiler.source>18</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <junit.version>5.8.2</junit.version>
-    <selenide.version>6.5.1</selenide.version>
+    <junit.version>5.9.1</junit.version>
+    <selenide.version>6.10.3</selenide.version>
+    <aspectj.version>1.9.9.1</aspectj.version>
+    <allure.version>2.21.0</allure.version>
     <webdriver.base.url>https://otus.ru</webdriver.base.url>
     <browser>chrome</browser>
   </properties>
@@ -32,15 +31,16 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.bonigarcia</groupId>
-      <artifactId>webdrivermanager</artifactId>
-      <version>5.0.3</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-junit5</artifactId>
+      <version>${allure.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-selenide</artifactId>
+      <version>${allure.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.codeborne</groupId>
@@ -55,50 +55,74 @@
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.20</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>3.23.1</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
       <scope>compile</scope>
     </dependency>
+
+
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.2</version>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
         <configuration>
-          <systemPropertyVariables>
-            <base_url>${webdriver.base.url}</base_url>
-            <browser>${browser}</browser>
-            <!--                        <forkCount>0</forkCount>-->
-          </systemPropertyVariables>
+          <source>8</source>
+          <target>8</target>
+          <parameters>true</parameters>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M9</version>
         <configuration>
-          <release>8</release>
+          <testFailureIgnore>false</testFailureIgnore>
+          <argLine>
+            -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+          </argLine>
+          <properties>
+            <property>
+              <name>listener</name>
+              <value>io.qameta.allure.junit5.AllureJunit5</value>
+            </property>
+          </properties>
+          <systemProperties>
+            <property>
+              <name>allure.results.directory</name>
+              <value>${project.build.directory}/allure-results</value>
+            </property>
+          </systemProperties>
+          <systemPropertyVariables>
+            <base_url>${webdriver.base.url}</base_url>
+            <browser>${browser}</browser>
+            <forkCount>0</forkCount>
+            <selenide.headless>true</selenide.headless>
+          </systemPropertyVariables>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>2.12.0</version>
+        <configuration>
+          <reportVersion>${allure.version}</reportVersion>
         </configuration>
       </plugin>
       <plugin>
