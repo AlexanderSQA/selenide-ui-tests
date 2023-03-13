@@ -6,10 +6,13 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 
 public class CoursePage extends BasePage<CoursePage> {
-  private final SelenideElement linkForPay = $x("//div/u/a[contains(text(), '')]");
+
+  private SelenideElement getLinkForPay() {
+    return $x("//div/u/a[contains(text(), '')]");
+  }
 
   public CoursePage checkLinkForPay() {
-    linkForPay
+    getLinkForPay()
         .shouldBe(Condition.visible)
         .scrollTo()
         .click();
