@@ -16,6 +16,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>5.8.2</junit.version>
     <selenide.version>6.5.1</selenide.version>
+    <aspectj.version>1.8.10</aspectj.version>
+    <allure.version>2.13.1</allure.version>
     <webdriver.base.url>https://otus.ru</webdriver.base.url>
     <browser>chrome</browser>
   </properties>
@@ -77,6 +79,24 @@
       <version>3.23.1</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-junit5</artifactId>
+      <version>2.20.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-selenide</artifactId>
+      <version>2.20.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.slf4j</groupId>-->
+    <!--      <artifactId>slf4j-simple</artifactId>-->
+    <!--      <version>2.0.6</version>-->
+    <!--      <scope>test</scope>-->
+    <!--    </dependency>-->
   </dependencies>
 
   <build>
@@ -86,11 +106,49 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.2</version>
         <configuration>
+<!--          <systemPropertyVariables>-->
+<!--            <base_url>${webdriver.base.url}</base_url>-->
+<!--            <browser>${browser}</browser>-->
+<!--            &lt;!&ndash;                        <forkCount>0</forkCount>&ndash;&gt;-->
+<!--          </systemPropertyVariables>-->
+          <testFailureIgnore>false</testFailureIgnore>
+          <argLine>
+            -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+          </argLine>
+          <properties>
+            <property>
+              <name>listener</name>
+              <value>io.qameta.allure.junit5.AllureJunit5</value>
+            </property>
+          </properties>
+          <systemProperties>
+            <property>
+              <name>allure.results.directory</name>
+              <value>${project.build.directory}/allure-results</value>
+            </property>
+          </systemProperties>
           <systemPropertyVariables>
             <base_url>${webdriver.base.url}</base_url>
             <browser>${browser}</browser>
             <!--                        <forkCount>0</forkCount>-->
+            <selenide.headless>true</selenide.headless>
           </systemPropertyVariables>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>2.10.0</version>
+        <configuration>
+          <reportVersion>${allure.version}</reportVersion>
+          <allureDownloadUrl>https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${allure.version}/allure-commandline-${allure.version}.zip</allureDownloadUrl>
         </configuration>
       </plugin>
       <plugin>
@@ -101,6 +159,7 @@
           <release>8</release>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
