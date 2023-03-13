@@ -3,15 +3,15 @@ package selenide;
 import com.selenide.logic.pages.CoursePage;
 import org.junit.jupiter.api.Test;
 
-public class CoursePageTests {
+public class CoursePageTests extends BaseTestAbs {
   CoursePage coursePage;
 
   @Test
-  public void test01() {
+  public void checkRedirectButton() {
     coursePage = new CoursePage();
     coursePage
         .openPage("/lessons/qa-auto-java-specialization/")
-        .checkLinkForPay();
-
+        .useRedirectByLink()
+        .checkButtonToSubmitApp();
   }
 }

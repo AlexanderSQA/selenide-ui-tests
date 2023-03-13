@@ -15,7 +15,7 @@ public class BaseTestAbs {
     Configuration.baseUrl = System.getProperty("base_url").trim().toLowerCase(Locale.ROOT);
     Configuration.browser = System.getProperty("browser").trim().toLowerCase(Locale.ROOT);
     Configuration.browserSize = "1920x1080";
-    Configuration.headless = false;
+    Configuration.headless = true;
   }
 
   @AfterEach
