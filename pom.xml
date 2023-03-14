@@ -105,7 +105,7 @@
           <systemPropertyVariables>
             <base_url>${webdriver.base.url}</base_url>
             <browser>${browser}</browser>
-            <forkCount>0</forkCount>
+<!--            <forkCount>0</forkCount>-->
             <selenide.headless>true</selenide.headless>
           </systemPropertyVariables>
         </configuration>

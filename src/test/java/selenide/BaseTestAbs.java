@@ -17,7 +17,7 @@ public class BaseTestAbs {
     Configuration.baseUrl = System.getProperty("base_url").trim().toLowerCase(Locale.ROOT);
     Configuration.browser = System.getProperty("browser").trim().toLowerCase(Locale.ROOT);
     Configuration.browserSize = "1920x1080";
-    Configuration.headless = true;
+    Configuration.headless = false;
     SelenideLogger.addListener("AllureSelenide", new AllureSelenide().screenshots(true).savePageSource(true));
   }
 
